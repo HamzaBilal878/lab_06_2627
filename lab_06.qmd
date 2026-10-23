@@ -1,0 +1,104 @@
+---
+title: Lab 6
+format:
+    html:
+        css: styles.css
+---
+
+## Objectives {.unnumbered}
+
+This lab accompanies the Week 6 notes, [*Data Visualisation Principles*](https://soton-fds.github.io/week06.html).
+
+- Be able to map variables from data frames to aesthetics in `ggplot2`.
+- Use common geometries (points, lines, bars, histograms and box plots).
+- Use scales and coordinates, for example to zoom in on part of a plot or use a log scale.
+- Summarise data before plotting to reveal patterns, such as trends hidden by seasonal variation.
+- Recognise and avoid misleading plots.
+
+When you have finished the lab, there are more questions on the same data in `lab_06_practice.qmd`, including themes, facets, colourblind-safe palettes and violin plots.
+
+### Task 1: Temperature Trends
+
+The file `data/MET Office Weather Data.csv` contains monthly weather observations from 36 stations in the UK between 1853 and 2020.
+The fields included are:
+
+- **year**: Year in which the measurements were taken
+- **month**: Month in which the measurements were taken
+- **tmax**: Mean daily maximum temperature (°C)
+- **tmin**: Mean daily minimum temperature (°C)
+- **af**: Days of air frost recorded that month (days)
+- **rain**: Total rainfall (mm)
+- **sun**: Total sunshine duration (hours)
+- **station**: Station location where measurement was recorded
+
+The year and month are stored as integers. The first cell below reads the data and adds a new column called `date` using the `lubridate` `make_date` function.
+
+```{r}
+#| message: false
+library(tidyverse)
+met <- read_csv("data/MET Office Weather Data.csv")
+met <- met |>
+    mutate(date = make_date(year, month, 1))
+```
+
+- [ ] Produce a line plot showing how the maximum temperature in July recorded in the station in Southampton has changed over time. Add nice labels to your plot.
+- [ ] There appears to be a break in the plotted line. Work out where it is by using `coord_cartesian` to zoom in on the $x$ axis, and then check the dataset to identify the root cause. (Hint: look at the `xlim` argument of `coord_cartesian`. The $x$ axis shows dates, so the limits need to be dates too.)
+
+::: {.solution}
+
+:::
+
+Next we look at every month of the year, not just July, at four stations.
+
+- [ ] Produce a scatter plot of the maximum temperature `tmax` against `date` for every month in Southampton, Oxford, Sheffield and Paisley. Colour the points by station.
+- [ ] Look up the function `geom_smooth`. Use the function to overlay a smooth trend line on the points. Make sure the line is visible by adjusting the `alpha` property on `geom_point`.
+- [ ] What does the line tell you about the trend of historical maximum temperatures?
+
+::: {.solution}
+
+:::
+
+The plot above mixes together every month of the year, so the seasonal cycle hides the long-term trend.
+Averaging over each year removes the seasonal cycle, since every (complete) year contains one of each month.
+
+- [ ] For each of Southampton, Oxford, Sheffield and Paisley, compute the mean `tmax` in each year. Plot these annual means against `year` as a line plot, coloured by station, and add a smooth trend line. Is the trend easier to see now?
+- [ ] Some of the annual means look suspicious. Which years have the lowest and highest annual means? How many months of data is each annual mean based on? (Hint: how would you count the *non-missing* values of a column inside `summarise`?)
+- [ ] Redraw the plot using only years with a complete set of 12 months. Roughly how much have annual mean maximum temperatures risen at these stations?
+
+::: {.solution}
+
+:::
+
+### Task 2: Rainfall
+
+- [ ] Produce a bar chart showing how many monthly records there are for each station, using `geom_bar()`. Then produce the same chart using `count()` and `geom_col()`. (Hint: to make the station names readable, add `theme(axis.text.x = element_text(angle = 45, hjust = 1))` to your plot.)
+
+::: {.solution}
+
+:::
+
+- [ ] Produce a bar chart showing the average rainfall (across all months and years) for the 5 stations with the highest average rainfall.
+- [ ] Now make a *deliberately misleading* version of this plot, which suggests that Cwmystwyth gets several times as much rain as Stornoway. Which of the principles in the Week 6 notes does your plot break? How could a reader spot the trick?
+
+::: {.solution}
+
+:::
+
+Bar charts of averages hide how much the rainfall varies from month to month, so next we look at its *distribution*.
+
+- [ ] Look up how to produce a box plot with `ggplot`, and produce a box plot of rainfall at each station. Are there any outliers at the low end? Why not?
+
+::: {.solution}
+
+:::
+
+- [ ] Plot a histogram of monthly rainfall across all stations. Experiment with the `bins` argument. How would you describe the shape of the distribution?
+- [ ] Redraw the histogram with a logarithmic $x$ axis (see the Week 6 notes). What happens to the shape? Read the warning messages carefully, and compare the number of rows removed with the previous histogram. Which months have been dropped, and why?
+
+::: {.solution}
+
+:::
+
+## Finished? {.unnumbered}
+
+Carry on with the questions in `lab_06_practice.qmd`.

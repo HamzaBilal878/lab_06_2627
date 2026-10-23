@@ -1,0 +1,89 @@
+---
+title: Lab 6 Practice Questions
+format:
+    html:
+        css: styles.css
+---
+
+## About these questions {.unnumbered}
+
+These questions are for extra practice after Lab 6, using the same data.
+Tasks 1–4 follow on from Task 1 of the lab (temperature), and Tasks 5 and 6 from Task 2 of the lab (rainfall).
+Questions marked **Extension** are more challenging.
+
+The cell below loads the weather data, and recreates the annual mean maximum temperatures for Southampton, Oxford, Sheffield and Paisley from Task 1 of the lab.
+
+```{r}
+#| message: false
+library(tidyverse)
+met <- read_csv("data/MET Office Weather Data.csv")
+met <- met |>
+    mutate(date = make_date(year, month, 1))
+
+stations <- c("southampton", "oxford", "sheffield", "paisley")
+annual <- met |>
+    filter(station %in% stations) |>
+    group_by(station, year) |>
+    summarise(
+        mean_tmax = mean(tmax, na.rm = TRUE),
+        n_months = sum(!is.na(tmax)),
+        .groups = "drop"
+    )
+```
+
+### Task 1: Themes and Legends
+
+- [ ] Experiment with different *themes* for your plot of July maximum temperatures in Southampton: how does it change if you use `theme_minimal()`, `theme_bw()`?
+- [ ] In your scatter plot of monthly maximum temperatures at four stations, adjust the theme to move the legend to the bottom of the plot. (Hint: look for `legend.position` in the help page for `theme`.)
+
+::: {.solution}
+
+:::
+
+### Task 2: The Seasonal Cycle and Facets
+
+- [ ] Plot `tmax` against `month` for Southampton. How large is the seasonal swing in temperature, compared with the change in the smooth lines in your scatter plot of monthly maximum temperatures?
+- [ ] Use `facet_wrap` to produce the scatter plot with smooth trend lines for all stations (not just the four in the lab). Does this support your conclusion about the trend in maximum temperatures?
+- [ ] Adjust output options to make the plot more visible: modify the `ncol` option of `facet_wrap`, and adjust the rendered plot size by adding a `#| fig-height:` option to the top of the cell (in the same way as `#| message: false`).
+- [ ] **Extension:** Produce the annual-mean plot (complete years only) for all 36 stations using `facet_wrap`, and compare it with your faceted plot of monthly values. Does it now support the conclusion that temperatures are rising?
+
+::: {.solution}
+
+:::
+
+### Task 3: Colour Blindness
+
+- [ ] Redraw your plot of annual mean maximum temperatures (complete years only) from the lab so that it would still work for a reader with red–green colour blindness, or if printed in black and white. (Hint: see the Colour Blindness section of the Week 6 notes.)
+
+::: {.solution}
+
+:::
+
+### Task 4: Temperature and Sunshine
+
+- [ ] Create a scatter plot of `tmax` against `date` across all stations. Colour the points by the amount of `sun` at that station.
+- [ ] Look up the function `scale_colour_gradient2`. Use it to add a diverging colour scale, with low sun coloured blue, high sun coloured red. Set the midpoint to be the median value and the mid colour to be white.
+- [ ] What conclusion can you draw from this plot?
+
+::: {.solution}
+
+:::
+
+### Task 5: Comparing Stations
+
+- [ ] Look at your bar chart of the number of monthly records at each station. Which stations have the longest records? How might this affect comparisons between stations, such as the average rainfall?
+
+::: {.solution}
+
+:::
+
+### Task 6: More Distributions
+
+- [ ] Customise your box plot of rainfall by station: change the length of the whiskers so that outliers appear at both the low and high ends, and change the outlier point colour to red. Does it make sense to call these points "outliers"?
+- [ ] Look up how to flip the $x$ and $y$ axes, so that the rainfall appears on the $x$ axis and the station on the $y$ axis. (Hint: you can change the `aes`, but there is another way of doing it that doesn't require modifying the labels...)
+- [ ] For a handful of stations (e.g. Southampton, Cwmystwyth, Eskdalemuir and Cambridge), overlay a violin plot and a narrow box plot, as in the Week 6 notes. What does the violin show that the box plot doesn't?
+- [ ] **Extension:** Add a density curve on top of your histogram of monthly rainfall. (Hint: see the Week 6 notes.)
+
+::: {.solution}
+
+:::
