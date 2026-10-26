@@ -39,13 +39,30 @@ library(tidyverse)
 met <- read_csv("data/MET Office Weather Data.csv")
 met <- met |>
     mutate(date = make_date(year, month, 1))
+met
 ```
 
 - [ ] Produce a line plot showing how the maximum temperature in July recorded in the station in Southampton has changed over time. Add nice labels to your plot.
 - [ ] There appears to be a break in the plotted line. Work out where it is by using `coord_cartesian` to zoom in on the $x$ axis, and then check the dataset to identify the root cause. (Hint: look at the `xlim` argument of `coord_cartesian`. The $x$ axis shows dates, so the limits need to be dates too.)
 
 ::: {.solution}
+```{r}
+filtered <- met|>
+  filter(month==7 & station=="southampton")
+filtered
 
+line<-filtered |>
+  ggplot(aes(x=year, y=tmax))+
+  geom_line()
+line
+  
+```
+```{r}
+line+coord_cartesian(xlim=c(1940,1943)
+
+)
+```
+The break happens in year 1940 and lasts until 1942 as the tmax of these years in july show result NA.
 :::
 
 Next we look at every month of the year, not just July, at four stations.
@@ -55,6 +72,17 @@ Next we look at every month of the year, not just July, at four stations.
 - [ ] What does the line tell you about the trend of historical maximum temperatures?
 
 ::: {.solution}
+```{r}
+scatter<-met|>
+  filter(station%in%c("southampton","sheffield","oxford","paisley"))|>
+  group_by(month)|>
+  ggplot(aes(x=date,y=tmax,colour = station))+
+  geom_point()+
+  geom_smooth()
+           
+scatter
+  
+```
 
 :::
 
@@ -74,6 +102,23 @@ Averaging over each year removes the seasonal cycle, since every (complete) year
 - [ ] Produce a bar chart showing how many monthly records there are for each station, using `geom_bar()`. Then produce the same chart using `count()` and `geom_col()`. (Hint: to make the station names readable, add `theme(axis.text.x = element_text(angle = 45, hjust = 1))` to your plot.)
 
 ::: {.solution}
+```{r}
+bar <-met|>
+  ggplot(aes(x=station))+
+  geom_bar()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+met
+bar
+col<- met|>
+ count(station)|>
+  
+  ggplot(aes(x=station,y=n))+
+  geom_col()
+col
+  
+```
+
+
 
 :::
 
